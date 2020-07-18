@@ -12,7 +12,7 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
 
-const Signup = ({params}) => {
+const Signup = params => {
   const [showPassword, setShowPassword] = useState({
     text: 'Show',
     security: true,
@@ -110,12 +110,17 @@ const Signup = ({params}) => {
             </View>
 
             <TouchableOpacity activeOpacity={0.8} style={styles.submitButton}>
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>Signup</Text>
             </TouchableOpacity>
 
             <View style={styles.noAccount}>
               <Text> Alredy a member? </Text>
-              <Text style={styles.signup}> Login </Text>
+              <Text
+                onPress={() => params.navigation.pop()}
+                style={styles.login}>
+                {' '}
+                Login{' '}
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -190,6 +195,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingStart: 20,
     paddingEnd: 20,
+    fontFamily: 'Poppins-Regular',
   },
   password: {
     flexDirection: 'row',
@@ -222,7 +228,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  signup: {
+  login: {
     textDecorationLine: 'underline',
     color: '#8E45EA',
   },

@@ -8,7 +8,11 @@ import {
   ScrollView,
 } from 'react-native';
 
-const Login = ({params}) => {
+import AuthContext from '../context/authContext';
+
+const Login = params => {
+  const {logIn} = React.useContext(AuthContext);
+
   const [showPassword, setShowPassword] = useState({
     text: 'Show',
     security: true,
@@ -56,13 +60,21 @@ const Login = ({params}) => {
               </View>
             </View>
 
-            <TouchableOpacity activeOpacity={0.8} style={styles.submitButton}>
+            <TouchableOpacity
+              onPress={() => console.warn(logIn())}
+              activeOpacity={0.8}
+              style={styles.submitButton}>
               <Text style={styles.buttonText}>Login</Text>
             </TouchableOpacity>
 
             <View style={styles.noAccount}>
               <Text> Dont have an account? </Text>
-              <Text style={styles.signup}> Sign Up </Text>
+              <Text
+                onPress={() => params.navigation.push('Signup')}
+                style={styles.signup}>
+                {' '}
+                Sign Up{' '}
+              </Text>
             </View>
           </View>
         </ScrollView>
@@ -76,7 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '20%',
+    height: '15%',
     backgroundColor: '#8E45EA',
     alignItems: 'center',
   },
@@ -116,6 +128,7 @@ const styles = StyleSheet.create({
     paddingStart: 20,
     paddingEnd: 20,
     width: '100%',
+    fontFamily: 'Poppins-Regular',
   },
   password: {
     flexDirection: 'row',
