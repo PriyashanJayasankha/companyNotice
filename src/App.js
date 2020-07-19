@@ -1,11 +1,15 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useReducer} from 'react';
 import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
 import {SafeAreaView, StyleSheet, StatusBar, Text} from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import Auth from '@react-native-firebase/auth';
+import Firestore from '@react-native-firebase/firestore';
 
 import AuthContext from './context/authContext';
 
@@ -34,23 +38,44 @@ const App = () => {
   // store.dispatch(actions.increment());
   /////////////////////////////////////////
 
-  const [userToken, setUserToken] = React.useState(false);
+  const [checkingAuth, setCheckingAuth] = React.useState(true);
+  const [userToken, setUserToken] = React.useState(null);
+
+  Auth().onAuthStateChanged(async user => {
+    if (user) {
+      if (userToken === null) {
+        await Firestore()
+          .collection('users')
+          .doc(user.uid)
+          .get()
+          .then(res => {
+            setUserToken(res.data());
+            setCheckingAuth(false);
+          });
+      }
+    } else {
+      setCheckingAuth(false);
+    }
+  });
 
   const authContext = React.useMemo(() => {
     return {
-      login: () => {
-        setUserToken(true);
+      login: user => {
+        setUserToken(user);
         return true;
       },
-      signup: () => {
-        setUserToken(true);
+      getUser: () => {
+        return userToken;
       },
       logout: () => {
-        setUserToken(false);
-        console.warn('Logged Out');
+        Auth()
+          .signOut()
+          .then(() => {
+            setUserToken(null);
+          });
       },
     };
-  }, []);
+  }, [userToken]);
 
   const HomeStack = createStackNavigator();
   const AuthStack = createStackNavigator();
@@ -96,6 +121,11 @@ const App = () => {
       <NavigationContainer>
         <Provider store={store}>
           <SafeAreaView style={styles.container}>
+            <Spinner
+              visible={checkingAuth}
+              textContent={'Loading...'}
+              textStyle={styles.spinnerTextStyle}
+            />
             {userToken ? <DrawerStackScreens /> : <AuthStackScreens />}
           </SafeAreaView>
         </Provider>
@@ -110,6 +140,9 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 80,
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
 

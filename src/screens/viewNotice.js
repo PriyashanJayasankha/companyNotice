@@ -13,6 +13,24 @@ import Icon from 'react-native-vector-icons/Feather';
 const windowHeight = Dimensions.get('window').height;
 
 const ViewNotice = params => {
+  const item = params.route.params.item;
+
+  let audiance = '|';
+
+  if (item.for.director && item.for.seniorWorker && item.for.juniorWorker) {
+    audiance += ' All |';
+  } else {
+    if (item.for.director) {
+      audiance += ' Directors |';
+    }
+    if (item.for.seniorWorker) {
+      audiance += ' Senior Workers |';
+    }
+    if (item.for.juniorWorker) {
+      audiance += ' Junior Workers |';
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -27,20 +45,10 @@ const ViewNotice = params => {
       </View>
       <View style={styles.bottomContainer}>
         <ScrollView contentContainerStyle={styles.scrollView}>
-          <Text style={styles.title}>Logo dessign for my new bussiness</Text>
+          <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.audianceLabel}>Norice for : </Text>
-          <Text style={styles.audiance}>Directors | Senior Workers </Text>
-          <Text style={styles.description}>
-            I need some one who can design me a stunning logo for my new beauti
-            saloon ...I need some one who can design me a stunning logo for my
-            new beauti saloon ...I need some one who can design me a stunning
-            logo for my new beauti saloon ...I need some one who can design me a
-            stunning logo for my new beauti saloon ...I need some one who can
-            design me a stunning logo for my new beauti saloon ...I need some
-            one who can design me a stunning logo for my new beauti saloon ...I
-            need some one who can design me a stunning logo for my new beauti
-            saloon.
-          </Text>
+          <Text style={styles.audiance}>{audiance}</Text>
+          <Text style={styles.description}>{item.description}</Text>
           <Text style={styles.time}>Added : 2 minutes ago</Text>
 
           <View style={styles.adminPart}>

@@ -7,14 +7,35 @@ import AuthContext from '../context/authContext';
 
 const DrawerContent = params => {
   const {logout} = React.useContext(AuthContext);
+  const {getUser} = React.useContext(AuthContext);
+
+  const user = getUser();
+  let position = '';
+
+  switch (user.position) {
+    case 1:
+      position = 'Admin';
+      break;
+    case 2:
+      position = 'Director';
+      break;
+    case 3:
+      position = 'Senior Worker';
+      break;
+    case 4:
+      position = 'Junior Worker';
+      break;
+    default:
+      position = '';
+  }
 
   return (
     <View>
       <SafeAreaView>
         <View style={styles.topBox}>
-          <Text style={styles.firstName}>Priyashan</Text>
-          <Text style={styles.lastName}>jayasankha</Text>
-          <Text style={styles.position}>Director</Text>
+          <Text style={styles.firstName}>{user.firstName}</Text>
+          <Text style={styles.lastName}>{user.lastName}</Text>
+          <Text style={styles.position}>{position}</Text>
         </View>
         <DrawerItem
           icon={() => <Icon name="home-outline" color="#5b5b5b" size={32} />}
@@ -70,7 +91,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   drawerItem: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: '#ffffff',
+    borderColor: '#f6f6f6',
+    borderBottomWidth: 1,
   },
   logoutContainer: {
     margin: 10,

@@ -12,15 +12,37 @@ import {
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
 
+import Auth from '@react-native-firebase/auth';
+import Firestore from '@react-native-firebase/firestore';
+
+import AuthContext from '../context/authContext';
+
+// validate = text => {
+//   let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+//   if (reg.test(text) === false) {
+//     console.log('Email is Not Correct');
+//     this.setState({email: text});
+//     return false;
+//   } else {
+//     this.setState({email: text});
+//     console.log('Email is Correct');
+//   }
+// };
+
 const Signup = params => {
   const [showPassword, setShowPassword] = useState({
     text: 'Show',
     security: true,
   });
 
-  const [dropDownItem, setDropDownItem] = useState({
-    level: 1,
-  });
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const [position, setPosition] = useState(2);
 
   const changePasswordVisibility = () => {
     if (showPassword.security) {
@@ -36,6 +58,51 @@ const Signup = params => {
     }
   };
 
+  const {login} = React.useContext(AuthContext);
+
+  const tryRegister = () => {
+    const newUser = {
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      position: position,
+      password: password,
+    };
+
+    if (newUser.email.length <= 0) {
+      setErrorMessage('Enter your email!');
+    } else if (newUser.firstName.length <= 0) {
+      setErrorMessage('Enter your first name!');
+    } else if (newUser.lastName.length <= 0) {
+      setErrorMessage('Enter your last name!');
+    } else if (newUser.password.length <= 0) {
+      setErrorMessage('Enter your password!');
+    } else {
+      Auth()
+        .createUserWithEmailAndPassword(newUser.email, newUser.password)
+        .then(res => {
+          //success Auth
+          res.user.updateProfile({displayName: position.toString()});
+          Firestore()
+            .collection('users')
+            .doc(res.user.uid)
+            .set({...newUser, id: res.user.uid})
+            .then(() => {
+              login({...newUser, id: res.user.uid});
+            });
+        })
+        .catch(error => {
+          if (error.code === 'auth/email-already-in-use') {
+            setErrorMessage('That email address is already in use!');
+          }
+
+          if (error.code === 'auth/invalid-email') {
+            setErrorMessage('That email address is invalid!');
+          }
+        });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -46,17 +113,26 @@ const Signup = params => {
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>E-mail</Text>
-              <TextInput style={styles.input} />
+              <TextInput
+                onChangeText={text => setEmail(text)}
+                style={styles.input}
+              />
             </View>
 
             <View style={styles.names}>
               <View style={{...styles.inputGroup, flex: 1}}>
                 <Text style={styles.inputLabel}>First Name</Text>
-                <TextInput style={styles.input} />
+                <TextInput
+                  onChangeText={text => setFirstName(text)}
+                  style={styles.input}
+                />
               </View>
               <View style={{...styles.inputGroup, flex: 1}}>
                 <Text style={styles.inputLabel}>Last Name</Text>
-                <TextInput style={styles.input} />
+                <TextInput
+                  onChangeText={text => setLastName(text)}
+                  style={styles.input}
+                />
               </View>
             </View>
 
@@ -66,30 +142,26 @@ const Signup = params => {
                 items={[
                   {
                     label: 'Director',
-                    value: 1,
-                    icon: () => <Icon name="user" size={18} color="#8E45EA" />,
-                  },
-                  {
-                    label: 'Senior Worker',
                     value: 2,
                     icon: () => <Icon name="user" size={18} color="#8E45EA" />,
                   },
                   {
-                    label: 'Junior Worker',
+                    label: 'Senior Worker',
                     value: 3,
                     icon: () => <Icon name="user" size={18} color="#8E45EA" />,
                   },
+                  {
+                    label: 'Junior Worker',
+                    value: 4,
+                    icon: () => <Icon name="user" size={18} color="#8E45EA" />,
+                  },
                 ]}
-                defaultValue={dropDownItem.level}
+                defaultValue={position}
                 containerStyle={dropDownStyle.containerStyle}
                 style={dropDownStyle.style}
                 itemStyle={dropDownStyle.itemStyle}
                 dropDownStyle={dropDownStyle.dropDownStyle}
-                onChangeItem={item =>
-                  setDropDownItem({
-                    level: item.value,
-                  })
-                }
+                onChangeItem={item => setPosition(item.value)}
               />
             </View>
 
@@ -97,6 +169,7 @@ const Signup = params => {
               <Text style={styles.inputLabel}>Password</Text>
               <View style={styles.password}>
                 <TextInput
+                  onChangeText={text => setPassword(text)}
                   // eslint-disable-next-line react-native/no-inline-styles
                   style={{...styles.input, width: '100%'}}
                   secureTextEntry={showPassword.security}
@@ -109,7 +182,12 @@ const Signup = params => {
               </View>
             </View>
 
-            <TouchableOpacity activeOpacity={0.8} style={styles.submitButton}>
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+
+            <TouchableOpacity
+              onPress={() => tryRegister()}
+              activeOpacity={0.8}
+              style={styles.submitButton}>
               <Text style={styles.buttonText}>Signup</Text>
             </TouchableOpacity>
 
@@ -118,8 +196,7 @@ const Signup = params => {
               <Text
                 onPress={() => params.navigation.pop()}
                 style={styles.login}>
-                {' '}
-                Login{' '}
+                Login
               </Text>
             </View>
           </View>
@@ -231,6 +308,12 @@ const styles = StyleSheet.create({
   login: {
     textDecorationLine: 'underline',
     color: '#8E45EA',
+  },
+  errorMessage: {
+    fontFamily: 'Poppins-Regular',
+    color: 'red',
+    width: '100%',
+    textAlign: 'center',
   },
 });
 

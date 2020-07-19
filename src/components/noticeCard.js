@@ -1,20 +1,39 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 
-const NoticeCard = ({params}) => {
+const NoticeCard = params => {
+  let audiance = '|';
+
+  if (
+    params.item.for.director &&
+    params.item.for.seniorWorker &&
+    params.item.for.juniorWorker
+  ) {
+    audiance += ' All |';
+  } else {
+    if (params.item.for.director) {
+      audiance += ' Directors |';
+    }
+    if (params.item.for.seniorWorker) {
+      audiance += ' Senior Workers |';
+    }
+    if (params.item.for.juniorWorker) {
+      audiance += ' Junior Workers |';
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.containerInner}>
         <View style={styles.titleAndStatus}>
-          <Text style={styles.title}>Title</Text>
+          <Text style={styles.title}>{params.item.title}</Text>
           <Text style={styles.status}>New</Text>
         </View>
         <Text style={styles.time}>Added: 2 minutes ago</Text>
         <Text numberOfLines={2} ellipsizeMode="tail" style={styles.description}>
-          cascac cacasc cascasc cascasc cascsac cascasc cascasc cascascas casc
-          ascc cascascas cascasca cascsa
+          {params.item.description}
         </Text>
-        <Text style={styles.audiance}> Notice for : All </Text>
+        <Text style={styles.audiance}> Notice for : {audiance} </Text>
       </View>
     </View>
   );

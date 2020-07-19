@@ -8,6 +8,10 @@ import {
   ScrollView,
 } from 'react-native';
 
+import Spinner from 'react-native-loading-spinner-overlay';
+
+import Auth from '@react-native-firebase/auth';
+import Firestore from '@react-native-firebase/firestore';
 import AuthContext from '../context/authContext';
 
 const Login = params => {
@@ -17,6 +21,12 @@ const Login = params => {
     text: 'Show',
     security: true,
   });
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [errorMessage, setErrorMessage] = useState('');
+  const [tryingLogging, setTryingLogging] = useState(false);
 
   const changePasswordVisibility = () => {
     if (showPassword.security) {
@@ -32,6 +42,44 @@ const Login = params => {
     }
   };
 
+  const tryLogin = () => {
+    const newUser = {
+      email: email,
+      password: password,
+    };
+
+    if (newUser.email.length <= 0) {
+      setErrorMessage('Enter your email!');
+    } else if (newUser.password.length <= 0) {
+      setErrorMessage('Enter your password!');
+    } else {
+      setTryingLogging(true);
+      Auth()
+        .signInWithEmailAndPassword(newUser.email, newUser.password)
+        .then(async res => {
+          //success Auth
+          const user = await Firestore()
+            .collection('users')
+            .doc(res.user.uid)
+            .get();
+
+          login(user.data());
+
+          setTryingLogging(false);
+        })
+        .catch(error => {
+          setTryingLogging(false);
+          if (error.code === 'auth/invalid-email') {
+            setErrorMessage('That email address is invalid!');
+          } else if (error.code === 'auth/user-not-found') {
+            setErrorMessage('You are not registered. Signup now!');
+          } else if (error.code === 'auth/wrong-password') {
+            setErrorMessage('Invaid password');
+          }
+        });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -39,16 +87,25 @@ const Login = params => {
       </View>
       <View style={styles.bottomContainer}>
         <ScrollView contentContainerStyle={styles.scrollView}>
+          <Spinner
+            visible={tryingLogging}
+            textContent={'Logging in...'}
+            textStyle={styles.spinnerTextStyle}
+          />
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>E-mail</Text>
-              <TextInput style={styles.input} />
+              <TextInput
+                onChangeText={text => setEmail(text)}
+                style={styles.input}
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Password</Text>
               <View style={styles.password}>
                 <TextInput
+                  onChangeText={text => setPassword(text)}
                   style={styles.input}
                   secureTextEntry={showPassword.security}
                 />
@@ -60,8 +117,10 @@ const Login = params => {
               </View>
             </View>
 
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+
             <TouchableOpacity
-              onPress={() => console.warn(login())}
+              onPress={() => tryLogin()}
               activeOpacity={0.8}
               style={styles.submitButton}>
               <Text style={styles.buttonText}>Login</Text>
@@ -161,6 +220,15 @@ const styles = StyleSheet.create({
   signup: {
     textDecorationLine: 'underline',
     color: '#8E45EA',
+  },
+  errorMessage: {
+    fontFamily: 'Poppins-Regular',
+    color: 'red',
+    width: '100%',
+    textAlign: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
 
