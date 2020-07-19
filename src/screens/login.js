@@ -11,7 +11,7 @@ import {
 import AuthContext from '../context/authContext';
 
 const Login = params => {
-  const {logIn} = React.useContext(AuthContext);
+  const {login} = React.useContext(AuthContext);
 
   const [showPassword, setShowPassword] = useState({
     text: 'Show',
@@ -61,7 +61,7 @@ const Login = params => {
             </View>
 
             <TouchableOpacity
-              onPress={() => console.warn(logIn())}
+              onPress={() => console.warn(login())}
               activeOpacity={0.8}
               style={styles.submitButton}>
               <Text style={styles.buttonText}>Login</Text>
@@ -72,8 +72,7 @@ const Login = params => {
               <Text
                 onPress={() => params.navigation.push('Signup')}
                 style={styles.signup}>
-                {' '}
-                Sign Up{' '}
+                Sign Up
               </Text>
             </View>
           </View>

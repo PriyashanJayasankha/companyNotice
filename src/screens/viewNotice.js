@@ -8,13 +8,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import Icon from 'react-native-vector-icons/Feather';
+
 const windowHeight = Dimensions.get('window').height;
 
-const ViewNotice = ({params}) => {
+const ViewNotice = params => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
         <Text style={styles.heading}>View Notice</Text>
+        <Icon
+          onPress={() => params.navigation.toggleDrawer()}
+          style={styles.icon}
+          name="menu"
+          size={32}
+          color="white"
+        />
       </View>
       <View style={styles.bottomContainer}>
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -68,8 +77,13 @@ const styles = StyleSheet.create({
     fontSize: 35,
     color: 'white',
     marginTop: 'auto',
-    marginBottom: 20,
     fontFamily: 'Poppins-Medium',
+    marginBottom: -20,
+  },
+  icon: {
+    marginRight: 'auto',
+    marginLeft: 10,
+    marginBottom: 10,
   },
   bottomContainer: {
     flex: 1,

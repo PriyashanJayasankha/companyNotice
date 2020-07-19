@@ -3,8 +3,9 @@ import React from 'react';
 import {Provider} from 'react-redux';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 
-import {SafeAreaView, StyleSheet, StatusBar} from 'react-native';
+import {SafeAreaView, StyleSheet, StatusBar, Text} from 'react-native';
 
 import AuthContext from './context/authContext';
 
@@ -14,6 +15,8 @@ import NoticeCard from './components/noticeCard';
 import Notices from './screens/notices';
 import ViewNotice from './screens/viewNotice';
 import AddNotice from './screens/addNotice';
+
+import DrawerContent from './components/drawerContent';
 
 // import Unknown from './components/unknown';
 
@@ -35,21 +38,23 @@ const App = () => {
 
   const authContext = React.useMemo(() => {
     return {
-      logIn: () => {
+      login: () => {
         setUserToken(true);
         return true;
       },
-      signUp: () => {
+      signup: () => {
         setUserToken(true);
       },
-      logOut: () => {
+      logout: () => {
         setUserToken(false);
+        console.warn('Logged Out');
       },
     };
   }, []);
 
   const HomeStack = createStackNavigator();
   const AuthStack = createStackNavigator();
+  const DrawerStack = createDrawerNavigator();
 
   // screen stacks
 
@@ -73,6 +78,14 @@ const App = () => {
     </HomeStack.Navigator>
   );
 
+  const DrawerStackScreens = () => (
+    <DrawerStack.Navigator
+      drawerContent={props => <DrawerContent {...props} />}>
+      <DrawerStack.Screen name="Home" component={HomeStackScreens} />
+      <DrawerStack.Screen name="AddNotice" component={AddNotice} />
+    </DrawerStack.Navigator>
+  );
+
   return (
     <AuthContext.Provider value={authContext}>
       <StatusBar
@@ -83,7 +96,7 @@ const App = () => {
       <NavigationContainer>
         <Provider store={store}>
           <SafeAreaView style={styles.container}>
-            {userToken ? <HomeStackScreens /> : <AuthStackScreens />}
+            {userToken ? <DrawerStackScreens /> : <AuthStackScreens />}
           </SafeAreaView>
         </Provider>
       </NavigationContainer>
