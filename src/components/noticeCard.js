@@ -1,6 +1,8 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
 
+import moment from 'moment';
+
 const NoticeCard = params => {
   let audiance = '|';
 
@@ -27,9 +29,26 @@ const NoticeCard = params => {
       <View style={styles.containerInner}>
         <View style={styles.titleAndStatus}>
           <Text style={styles.title}>{params.item.title}</Text>
-          <Text style={styles.status}>New</Text>
+          {params.item.newForMe && params.item.isNew ? (
+            <Text style={styles.statusNew}>New</Text>
+          ) : (
+            <View />
+          )}
+          {params.item.newForMe && !params.item.isNew ? (
+            <Text style={styles.statusUpdated}>Updated</Text>
+          ) : (
+            <View />
+          )}
         </View>
-        <Text style={styles.time}>Added: 2 minutes ago</Text>
+        {params.item.isNew ? (
+          <Text style={styles.time}>
+            Added: {moment(params.item.time).fromNow()}
+          </Text>
+        ) : (
+          <Text style={styles.time}>
+            Updated: {moment(params.item.time).fromNow()}
+          </Text>
+        )}
         <Text numberOfLines={2} ellipsizeMode="tail" style={styles.description}>
           {params.item.description}
         </Text>
@@ -59,10 +78,15 @@ const styles = StyleSheet.create({
     color: '#333333',
     fontSize: 18,
   },
-  status: {
+  statusNew: {
     marginLeft: 'auto',
     fontFamily: 'Poppins-Bold',
     color: '#01A77F',
+  },
+  statusUpdated: {
+    marginLeft: 'auto',
+    fontFamily: 'Poppins-Bold',
+    color: '#EABC45',
   },
   time: {
     fontFamily: 'Poppins-Regular',
@@ -71,6 +95,8 @@ const styles = StyleSheet.create({
   description: {
     fontFamily: 'Poppins-Regular',
     color: '#666666',
+    height: 40,
+    textAlignVertical: 'center',
   },
   audiance: {
     fontFamily: 'Poppins-Regular',

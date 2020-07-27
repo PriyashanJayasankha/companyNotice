@@ -6,17 +6,14 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
 import Auth from '@react-native-firebase/auth';
-import Firestore from '@react-native-firebase/firestore';
-import AuthContext from '../context/authContext';
 
 const Login = params => {
-  const {login} = React.useContext(AuthContext);
-
   const [showPassword, setShowPassword] = useState({
     text: 'Show',
     security: true,
@@ -56,15 +53,7 @@ const Login = params => {
       setTryingLogging(true);
       Auth()
         .signInWithEmailAndPassword(newUser.email, newUser.password)
-        .then(async res => {
-          //success Auth
-          const user = await Firestore()
-            .collection('users')
-            .doc(res.user.uid)
-            .get();
-
-          login(user.data());
-
+        .then(() => {
           setTryingLogging(false);
         })
         .catch(error => {
@@ -75,6 +64,8 @@ const Login = params => {
             setErrorMessage('You are not registered. Signup now!');
           } else if (error.code === 'auth/wrong-password') {
             setErrorMessage('Invaid password');
+          } else if (error.code === 'auth/network-request-failed') {
+            Alert.alert('Error !', 'Check your network connection');
           }
         });
     }
@@ -118,7 +109,8 @@ const Login = params => {
             </View>
 
             <Text style={styles.errorMessage}>{errorMessage}</Text>
-
+          </View>
+          <View style={styles.bottomButtons}>
             <TouchableOpacity
               onPress={() => tryLogin()}
               activeOpacity={0.8}
@@ -147,7 +139,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     height: '15%',
-    backgroundColor: '#8E45EA',
+    backgroundColor: '#1F92D1',
     alignItems: 'center',
   },
   heading: {
@@ -159,15 +151,19 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flex: 1,
-    alignContent: 'center',
+    width: '100%',
   },
   scrollView: {
     width: '100%',
+    flex: 1,
+    paddingBottom: 30,
+    margin: 0,
     alignItems: 'center',
   },
   form: {
     width: '90%',
-    marginTop: 100,
+    marginTop: 'auto',
+    alignContent: 'center',
   },
   inputGroup: {
     margin: 10,
@@ -196,16 +192,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     fontSize: 16,
     marginLeft: -60,
-    color: '#8E45EA',
+    color: '#1F92D1',
   },
   submitButton: {
     margin: 10,
-    marginTop: 100,
     borderRadius: 8,
     height: 50,
-    backgroundColor: '#8E45EA',
+    backgroundColor: '#1F92D1',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bottomButtons: {
+    marginTop: 'auto',
+    width: '90%',
+    padding: 10,
   },
   buttonText: {
     fontFamily: 'Poppins-Medium',
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   signup: {
     textDecorationLine: 'underline',
-    color: '#8E45EA',
+    color: '#1F92D1',
   },
   errorMessage: {
     fontFamily: 'Poppins-Regular',

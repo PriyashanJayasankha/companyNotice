@@ -10,10 +10,58 @@ import {
 
 import Icon from 'react-native-vector-icons/Feather';
 
+import Firestore from '@react-native-firebase/firestore';
+
+import AuthContext from '../context/authContext';
+
+import moment from 'moment';
+
 const windowHeight = Dimensions.get('window').height;
 
 const ViewNotice = params => {
   const item = params.route.params.item;
+
+  const {getUser} = React.useContext(AuthContext);
+
+  const user = getUser();
+
+  switch (user.position) {
+    case 2:
+      if (!item.readBy.directors.includes(user.id)) {
+        Firestore()
+          .collection('notices')
+          .doc(item.id)
+          .set(
+            {readBy: {directors: [...item.readBy.directors, user.id]}},
+            {merge: true},
+          );
+      }
+      break;
+    case 3:
+      if (!item.readBy.seniorWorkers.includes(user.id)) {
+        Firestore()
+          .collection('notices')
+          .doc(item.id)
+          .set(
+            {readBy: {seniorWorkers: [...item.readBy.seniorWorkers, user.id]}},
+            {merge: true},
+          );
+      }
+      break;
+    case 4:
+      if (!item.readBy.juniorWorkers.includes(user.id)) {
+        Firestore()
+          .collection('notices')
+          .doc(item.id)
+          .set(
+            {readBy: {juniorWorkers: [...item.readBy.juniorWorkers, user.id]}},
+            {merge: true},
+          );
+      }
+      break;
+    default:
+      break;
+  }
 
   let audiance = '|';
 
@@ -31,6 +79,14 @@ const ViewNotice = params => {
     }
   }
 
+  const deleteNotice = () => {
+    Firestore()
+      .collection('notices')
+      .doc(item.id)
+      .delete();
+    params.navigation.navigate('Notices');
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
@@ -44,28 +100,66 @@ const ViewNotice = params => {
         />
       </View>
       <View style={styles.bottomContainer}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
+        <ScrollView style={styles.scrollView}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.audianceLabel}>Norice for : </Text>
           <Text style={styles.audiance}>{audiance}</Text>
           <Text style={styles.description}>{item.description}</Text>
-          <Text style={styles.time}>Added : 2 minutes ago</Text>
+          {item.isNew ? (
+            <Text style={styles.time}>
+              Added: {moment(item.time).fromNow()}
+            </Text>
+          ) : (
+            <Text style={styles.time}>
+              Updated: {moment(item.time).fromNow()}
+            </Text>
+          )}
 
-          <View style={styles.adminPart}>
+          <View style={styles.viewedBy}>
             <Text style={styles.viewTitle}>Viewed By :</Text>
-            <Text style={styles.viewCount}>4 - Directors</Text>
-            <Text style={styles.viewCount}>10 - Senior Workers</Text>
-            <Text style={styles.viewCount}>50 - Junior Workers</Text>
 
+            {item.for.director ? (
+              <Text style={styles.viewCount}>
+                {item.readBy.directors.length} - Directors
+              </Text>
+            ) : (
+              <View />
+            )}
+
+            {item.for.seniorWorker ? (
+              <Text style={styles.viewCount}>
+                {item.readBy.seniorWorkers.length} - Senior Workers
+              </Text>
+            ) : (
+              <View />
+            )}
+
+            {item.for.juniorWorker ? (
+              <Text style={styles.viewCount}>
+                {item.readBy.juniorWorkers.length} - Junior Workers
+              </Text>
+            ) : (
+              <View />
+            )}
+          </View>
+          {user.position === 1 ? (
             <View style={styles.buttonContainer}>
-              <TouchableOpacity activeOpacity={0.8} style={styles.deleteButton}>
+              <TouchableOpacity
+                onPress={() => deleteNotice()}
+                activeOpacity={0.8}
+                style={styles.deleteButton}>
                 <Text style={styles.buttonText}>Delete</Text>
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.8} style={styles.updateButton}>
+              <TouchableOpacity
+                onPress={() => params.navigation.push('UpdateNotice', {item})}
+                activeOpacity={0.8}
+                style={styles.updateButton}>
                 <Text style={styles.buttonText}>Update</Text>
               </TouchableOpacity>
             </View>
-          </View>
+          ) : (
+            <View />
+          )}
         </ScrollView>
       </View>
     </View>
@@ -78,7 +172,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     height: '15%',
-    backgroundColor: '#8E45EA',
+    backgroundColor: '#1F92D1',
     alignItems: 'center',
   },
   heading: {
@@ -101,16 +195,17 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: windowHeight - (windowHeight * 18) / 100,
     padding: 30,
+    flex: 1,
   },
   title: {
     textAlign: 'center',
     fontFamily: 'Poppins-Bold',
-    fontSize: 20,
+    fontSize: 30,
     color: '#333333',
     marginBottom: 5,
   },
   audianceLabel: {
-    color: '#AAAAAA',
+    color: '#444444',
     fontFamily: 'Poppins-Medium',
   },
   audiance: {
@@ -122,13 +217,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#333333',
     marginBottom: 30,
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 20,
+    borderColor: '#33799F',
   },
   time: {
     marginLeft: 'auto',
-    color: '#AAAAAA',
+    color: '#444444',
     fontFamily: 'Poppins-Medium',
   },
-  adminPart: {
+  viewedBy: {
     marginTop: 50,
   },
   viewTitle: {
@@ -141,6 +240,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     marginTop: 50,
+    marginBottom: 50,
   },
   deleteButton: {
     borderRadius: 8,

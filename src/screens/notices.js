@@ -46,10 +46,34 @@ const Notices = params => {
 
         if (user.position === 2) {
           tempNotices = tempNotices.filter(item => item.for.director);
+          tempNotices = tempNotices.map(item => {
+            if (item.readBy.directors.includes(user.id)) {
+              item = {...item, newForMe: false};
+            } else {
+              item = {...item, newForMe: true};
+            }
+            return item;
+          });
         } else if (user.position === 3) {
           tempNotices = tempNotices.filter(item => item.for.seniorWorker);
+          tempNotices = tempNotices.map(item => {
+            if (item.readBy.seniorWorkers.includes(user.id)) {
+              item = {...item, newForMe: false};
+            } else {
+              item = {...item, newForMe: true};
+            }
+            return item;
+          });
         } else if (user.position === 4) {
           tempNotices = tempNotices.filter(item => item.for.juniorWorker);
+          tempNotices = tempNotices.map(item => {
+            if (item.readBy.juniorWorkers.includes(user.id)) {
+              item = {...item, newForMe: false};
+            } else {
+              item = {...item, newForMe: true};
+            }
+            return item;
+          });
         }
 
         setNotices(tempNotices);
@@ -124,7 +148,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     height: '15%',
-    backgroundColor: '#8E45EA',
+    backgroundColor: '#1F92D1',
     alignItems: 'center',
   },
   heading: {

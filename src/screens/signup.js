@@ -7,7 +7,10 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/Feather';
@@ -44,6 +47,9 @@ const Signup = params => {
 
   const [position, setPosition] = useState(2);
 
+  const [registering, setRegistering] = useState(false);
+  const [logging, setLogging] = useState(false);
+
   const changePasswordVisibility = () => {
     if (showPassword.security) {
       setShowPassword({
@@ -66,7 +72,7 @@ const Signup = params => {
       firstName: firstName,
       lastName: lastName,
       position: position,
-      password: password,
+      accountStatus: 'pending',
     };
 
     if (newUser.email.length <= 0) {
@@ -75,29 +81,39 @@ const Signup = params => {
       setErrorMessage('Enter your first name!');
     } else if (newUser.lastName.length <= 0) {
       setErrorMessage('Enter your last name!');
-    } else if (newUser.password.length <= 0) {
+    } else if (password.length <= 0) {
       setErrorMessage('Enter your password!');
     } else {
+      setRegistering(true);
       Auth()
-        .createUserWithEmailAndPassword(newUser.email, newUser.password)
+        .createUserWithEmailAndPassword(newUser.email, password)
         .then(res => {
           //success Auth
+          setRegistering(false);
+          setLogging(true);
           res.user.updateProfile({displayName: position.toString()});
           Firestore()
             .collection('users')
             .doc(res.user.uid)
             .set({...newUser, id: res.user.uid})
             .then(() => {
+              setLogging(false);
               login({...newUser, id: res.user.uid});
             });
         })
         .catch(error => {
+          setRegistering(false);
           if (error.code === 'auth/email-already-in-use') {
             setErrorMessage('That email address is already in use!');
           }
-
           if (error.code === 'auth/invalid-email') {
             setErrorMessage('That email address is invalid!');
+          }
+          if (error.code === 'auth/weak-password') {
+            setErrorMessage('Password must be atleast 6 characters');
+          }
+          if (error.code === 'auth/network-request-failed') {
+            Alert.alert('Error !', 'Check your network connection');
           }
         });
     }
@@ -110,6 +126,16 @@ const Signup = params => {
       </View>
       <View style={styles.bottomContainer}>
         <ScrollView contentContainerStyle={styles.scrollView}>
+          <Spinner
+            visible={registering}
+            textContent={'Signing up...'}
+            textStyle={styles.spinnerTextStyle}
+          />
+          <Spinner
+            visible={logging}
+            textContent={'Logging in...'}
+            textStyle={styles.spinnerTextStyle}
+          />
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>E-mail</Text>
@@ -143,17 +169,17 @@ const Signup = params => {
                   {
                     label: 'Director',
                     value: 2,
-                    icon: () => <Icon name="user" size={18} color="#8E45EA" />,
+                    icon: () => <Icon name="user" size={18} color="#1F92D1" />,
                   },
                   {
                     label: 'Senior Worker',
                     value: 3,
-                    icon: () => <Icon name="user" size={18} color="#8E45EA" />,
+                    icon: () => <Icon name="user" size={18} color="#1F92D1" />,
                   },
                   {
                     label: 'Junior Worker',
                     value: 4,
-                    icon: () => <Icon name="user" size={18} color="#8E45EA" />,
+                    icon: () => <Icon name="user" size={18} color="#1F92D1" />,
                   },
                 ]}
                 defaultValue={position}
@@ -183,7 +209,8 @@ const Signup = params => {
             </View>
 
             <Text style={styles.errorMessage}>{errorMessage}</Text>
-
+          </View>
+          <View style={styles.bottomButtons}>
             <TouchableOpacity
               onPress={() => tryRegister()}
               activeOpacity={0.8}
@@ -231,7 +258,7 @@ const styles = StyleSheet.create({
   },
   topBar: {
     height: '15%',
-    backgroundColor: '#8E45EA',
+    backgroundColor: '#1F92D1',
     alignItems: 'center',
   },
   heading: {
@@ -284,14 +311,18 @@ const styles = StyleSheet.create({
     width: 50,
     fontSize: 16,
     marginLeft: -60,
-    color: '#8E45EA',
+    color: '#1F92D1',
+  },
+  bottomButtons: {
+    margin: 10,
+    marginTop: 60,
+    width: '90%',
+    padding: 10,
   },
   submitButton: {
-    margin: 10,
-    marginTop: 50,
     borderRadius: 8,
     height: 50,
-    backgroundColor: '#8E45EA',
+    backgroundColor: '#1F92D1',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -307,13 +338,16 @@ const styles = StyleSheet.create({
   },
   login: {
     textDecorationLine: 'underline',
-    color: '#8E45EA',
+    color: '#1F92D1',
   },
   errorMessage: {
     fontFamily: 'Poppins-Regular',
     color: 'red',
     width: '100%',
     textAlign: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });
 

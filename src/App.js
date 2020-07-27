@@ -5,20 +5,31 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 
-import {SafeAreaView, StyleSheet, StatusBar, Text} from 'react-native';
+import {
+  SafeAreaView,
+  Text,
+  View,
+  StyleSheet,
+  StatusBar,
+  Alert,
+} from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import Auth from '@react-native-firebase/auth';
+import Auth, {firebase} from '@react-native-firebase/auth';
 import Firestore from '@react-native-firebase/firestore';
 
 import AuthContext from './context/authContext';
 
 import Login from './screens/login';
 import Signup from './screens/signup';
-import NoticeCard from './components/noticeCard';
 import Notices from './screens/notices';
 import ViewNotice from './screens/viewNotice';
 import AddNotice from './screens/addNotice';
+import NewRequests from './screens/newRequests';
+import RejectedRequests from './screens/rejectedRequests';
+import AcceptedRequests from './screens/acceptedRequests';
+import ErrorScreen from './screens/errorScreen';
+import UpdateNotice from './screens/updateNotice';
 
 import DrawerContent from './components/drawerContent';
 
@@ -38,44 +49,52 @@ const App = () => {
   // store.dispatch(actions.increment());
   /////////////////////////////////////////
 
-  const [checkingAuth, setCheckingAuth] = React.useState(true);
-  const [userToken, setUserToken] = React.useState(null);
-
-  Auth().onAuthStateChanged(async user => {
-    if (user) {
-      if (userToken === null) {
-        await Firestore()
-          .collection('users')
-          .doc(user.uid)
-          .get()
-          .then(res => {
-            setUserToken(res.data());
-            setCheckingAuth(false);
-          });
-      }
-    } else {
-      setCheckingAuth(false);
-    }
+  const [loading, setLoading] = React.useState(true);
+  const [userToken, setUserToken] = React.useState({
+    user: null,
+    loading: true,
   });
+
+  React.useEffect(() => {
+    Auth().onAuthStateChanged(async user => {
+      if (user) {
+        if (userToken.user === null) {
+          const userdata = await Firestore()
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+          console.warn('userToken setted');
+          setUserToken({
+            user: userdata.data(),
+            loading: false,
+          });
+        }
+      } else {
+        setLoading(false);
+      }
+    });
+  }, []);
 
   const authContext = React.useMemo(() => {
     return {
       login: user => {
-        setUserToken(user);
+        console.warn('login called');
+        setUserToken({user: user, loading: false});
         return true;
       },
       getUser: () => {
-        return userToken;
+        return userToken.user;
       },
       logout: () => {
         Auth()
           .signOut()
           .then(() => {
-            setUserToken(null);
+            setUserToken({user: null, loading: false});
           });
       },
     };
-  }, [userToken]);
+  }, [userToken.user]);
 
   const HomeStack = createStackNavigator();
   const AuthStack = createStackNavigator();
@@ -100,6 +119,7 @@ const App = () => {
       }}>
       <HomeStack.Screen name="Notices" component={Notices} />
       <HomeStack.Screen name="ViewNotice" component={ViewNotice} />
+      <HomeStack.Screen name="UpdateNotice" component={UpdateNotice} />
     </HomeStack.Navigator>
   );
 
@@ -108,25 +128,70 @@ const App = () => {
       drawerContent={props => <DrawerContent {...props} />}>
       <DrawerStack.Screen name="Home" component={HomeStackScreens} />
       <DrawerStack.Screen name="AddNotice" component={AddNotice} />
+      <DrawerStack.Screen name="NewRequests" component={NewRequests} />
+      <DrawerStack.Screen
+        name="RejectedRequests"
+        component={RejectedRequests}
+      />
+      <DrawerStack.Screen
+        name="AcceptedRequests"
+        component={AcceptedRequests}
+      />
     </DrawerStack.Navigator>
   );
+
+  const loadScreen = () => {
+    let renderItem = <View />;
+
+    if (userToken.user) {
+      if (userToken.user.accountStatus === 'pending') {
+        renderItem = (
+          <ErrorScreen
+            title="Wait"
+            message="Your account is still under review, wait for untill the system Admin
+            accept your account"
+          />
+        );
+      } else if (userToken.user.accountStatus === 'rejected') {
+        renderItem = (
+          <ErrorScreen
+            title="Error"
+            message="Your account is Rejected by Admin, please contact System Admin for
+            more details"
+          />
+        );
+      } else {
+        console.warn('load drawer');
+        renderItem = <DrawerStackScreens />;
+      }
+    } else {
+      console.warn('load Auth');
+      renderItem = <AuthStackScreens />;
+    }
+    return renderItem;
+  };
 
   return (
     <AuthContext.Provider value={authContext}>
       <StatusBar
         translucent
-        backgroundColor="#8E45EA"
+        backgroundColor="#1F92D1"
         barStyle="light-content"
       />
       <NavigationContainer>
         <Provider store={store}>
           <SafeAreaView style={styles.container}>
             <Spinner
-              visible={checkingAuth}
+              visible={userToken.loading && loading}
               textContent={'Loading...'}
               textStyle={styles.spinnerTextStyle}
             />
-            {userToken ? <DrawerStackScreens /> : <AuthStackScreens />}
+            <Spinner
+              visible={userToken.loading && loading}
+              textContent={'Loading...'}
+              textStyle={styles.spinnerTextStyle}
+            />
+            <>{loadScreen()}</>
           </SafeAreaView>
         </Provider>
       </NavigationContainer>

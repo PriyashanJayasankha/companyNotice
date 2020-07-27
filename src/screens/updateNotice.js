@@ -13,20 +13,27 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import Icon from 'react-native-vector-icons/Feather';
 import Firestore from '@react-native-firebase/firestore';
-import {set} from 'react-native-reanimated';
 
-const AddNotice = params => {
-  const [title, setTitle] = React.useState('');
-  const [description, setDescription] = React.useState('');
+const UpdateNotice = params => {
+  const item = params.route.params.item;
 
-  const [directorChecked, setDirectorChecked] = React.useState(false);
-  const [seniorWorkerChecked, setSeniorWorkerChecked] = React.useState(false);
-  const [juniorWorkerChecked, setJuniorWorkerChecked] = React.useState(false);
+  const [title, setTitle] = React.useState(item.title);
+  const [description, setDescription] = React.useState(item.description);
+
+  const [directorChecked, setDirectorChecked] = React.useState(
+    item.for.director,
+  );
+  const [seniorWorkerChecked, setSeniorWorkerChecked] = React.useState(
+    item.for.seniorWorker,
+  );
+  const [juniorWorkerChecked, setJuniorWorkerChecked] = React.useState(
+    item.for.juniorWorker,
+  );
 
   const [errorMessage, setErrorMessage] = React.useState('');
   const [addingNotice, setAddingNotice] = React.useState(false);
 
-  const tryAddNotice = () => {
+  const tryUpdateNotice = () => {
     const newNotice = {
       title: title,
       description: description,
@@ -40,7 +47,7 @@ const AddNotice = params => {
         seniorWorkers: [],
         juniorWorkers: [],
       },
-      isNew: true,
+      isNew: false,
       time: Date.now(),
     };
     if (newNotice.title.length <= 0) {
@@ -55,16 +62,11 @@ const AddNotice = params => {
       setAddingNotice(true);
       Firestore()
         .collection('notices')
-        .add(newNotice)
-        .then(res => {
-          Firestore()
-            .collection('notices')
-            .doc(res.id)
-            .update({id: res.id})
-            .then(() => {
-              setAddingNotice(false);
-              params.navigation.navigate('Home', {screen: 'Notices'});
-            });
+        .doc(item.id)
+        .update(newNotice)
+        .then(() => {
+          setAddingNotice(false);
+          params.navigation.navigate('Home', {screen: 'Notices'});
         });
     }
   };
@@ -72,7 +74,7 @@ const AddNotice = params => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.heading}>Add a Notice</Text>
+        <Text style={styles.heading}>Update Notice</Text>
         <Icon
           onPress={() => params.navigation.toggleDrawer()}
           style={styles.icon}
@@ -92,6 +94,7 @@ const AddNotice = params => {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Title</Text>
               <TextInput
+                value={title}
                 onChangeText={text => setTitle(text)}
                 style={styles.input}
               />
@@ -99,6 +102,7 @@ const AddNotice = params => {
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Decription</Text>
               <TextInput
+                value={description}
                 onChangeText={text => setDescription(text)}
                 multiline={true}
                 // eslint-disable-next-line react-native/no-inline-styles
@@ -137,12 +141,20 @@ const AddNotice = params => {
 
             <Text style={styles.errorMessage}>{errorMessage}</Text>
           </View>
-          <TouchableOpacity
-            onPress={() => tryAddNotice()}
-            activeOpacity={0.8}
-            style={styles.postButton}>
-            <Text style={styles.buttonText}>Add</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              onPress={() => params.navigation.pop()}
+              activeOpacity={0.8}
+              style={styles.cancelButton}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => tryUpdateNotice()}
+              activeOpacity={0.8}
+              style={styles.updateButton}>
+              <Text style={styles.buttonText}>Update</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </View>
     </View>
@@ -176,9 +188,8 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     width: '100%',
-    alignItems: 'center',
-    flex: 1,
     padding: 30,
+    flex: 1,
   },
   form: {
     width: '100%',
@@ -212,14 +223,28 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     color: '#333333',
   },
-  postButton: {
+  buttonContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    marginTop: 0,
+  },
+  cancelButton: {
     borderRadius: 8,
     height: 50,
-    width: '100%',
-    backgroundColor: '#1F92D1',
+    width: '40%',
+    backgroundColor: '#EA4F45',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
+    marginRight: 'auto',
+  },
+  updateButton: {
+    borderRadius: 8,
+    height: 50,
+    width: '40%',
+    backgroundColor: '#EABC45',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 'auto',
   },
   buttonText: {
     fontFamily: 'Poppins-Medium',
@@ -237,4 +262,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddNotice;
+export default UpdateNotice;

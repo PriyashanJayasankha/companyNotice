@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AuthContext from '../context/authContext';
 
+import {StackActions} from '@react-navigation/native';
+
 const DrawerContent = params => {
   const {logout} = React.useContext(AuthContext);
   const {getUser} = React.useContext(AuthContext);
@@ -29,33 +31,80 @@ const DrawerContent = params => {
       position = '';
   }
 
+  const tryLogout = () => {
+    logout();
+    params.navigation.navigate('Home', {screen: 'Notices'});
+    //params.navigation.dispatch(StackActions.popToTop());
+  };
+
   return (
     <View>
-      <SafeAreaView>
+      <SafeAreaView style={styles.page}>
         <View style={styles.topBox}>
           <Text style={styles.firstName}>{user.firstName}</Text>
           <Text style={styles.lastName}>{user.lastName}</Text>
           <Text style={styles.position}>{position}</Text>
         </View>
         <DrawerItem
-          icon={() => <Icon name="home-outline" color="#5b5b5b" size={32} />}
+          icon={() => <Icon name="home-outline" color="#33799F" size={32} />}
           style={styles.drawerItem}
           label="Home"
           onPress={() => {
             params.navigation.navigate('Home', {screen: 'Notices'});
           }}
         />
-        <DrawerItem
-          icon={() => <Icon name="newspaper" color="#5b5b5b" size={32} />}
-          style={styles.drawerItem}
-          label="Add Notice"
-          onPress={() => {
-            params.navigation.navigate('AddNotice');
-          }}
-        />
+
+        {user.position === 1 ? (
+          <View>
+            <DrawerItem
+              icon={() => <Icon name="newspaper" color="#33799F" size={32} />}
+              style={styles.drawerItem}
+              label="Add Notice"
+              onPress={() => {
+                params.navigation.navigate('AddNotice');
+              }}
+            />
+            <DrawerItem
+              icon={() => (
+                <Icon name="account-plus-outline" color="#33799F" size={32} />
+              )}
+              style={styles.drawerItem}
+              label="New requests"
+              onPress={() => {
+                params.navigation.navigate('NewRequests');
+              }}
+            />
+            <DrawerItem
+              icon={() => (
+                <Icon name="account-remove-outline" color="#33799F" size={32} />
+              )}
+              style={styles.drawerItem}
+              label="Rejected requests"
+              onPress={() => {
+                params.navigation.navigate('RejectedRequests');
+              }}
+            />
+            <DrawerItem
+              icon={() => (
+                <Icon
+                  name="account-multiple-check-outline"
+                  color="#33799F"
+                  size={32}
+                />
+              )}
+              style={styles.drawerItem}
+              label="Accepted requests"
+              onPress={() => {
+                params.navigation.navigate('AcceptedRequests');
+              }}
+            />
+          </View>
+        ) : (
+          <View />
+        )}
 
         <View style={styles.logoutContainer}>
-          <Text onPress={() => logout()} style={styles.logout}>
+          <Text onPress={() => tryLogout()} style={styles.logout}>
             Logout
           </Text>
         </View>
@@ -65,9 +114,12 @@ const DrawerContent = params => {
 };
 
 const styles = StyleSheet.create({
+  page: {
+    height: '100%',
+  },
   topBox: {
     height: 150,
-    backgroundColor: '#7B48AD',
+    backgroundColor: '#33799F',
     justifyContent: 'flex-end',
     marginBottom: 8,
   },
@@ -97,18 +149,18 @@ const styles = StyleSheet.create({
   },
   logoutContainer: {
     margin: 10,
-    marginTop: 200,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f6f6f6',
     padding: 10,
     borderRadius: 8,
+    marginTop: 'auto',
   },
   logout: {
     fontFamily: 'Poppins-Regular',
     textAlign: 'center',
     height: 'auto',
-    color: 'red',
+    color: '#33799F',
     fontSize: 20,
     width: '100%',
   },
