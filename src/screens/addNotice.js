@@ -13,7 +13,6 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 import Icon from 'react-native-vector-icons/Feather';
 import Firestore from '@react-native-firebase/firestore';
-import {set} from 'react-native-reanimated';
 
 const AddNotice = params => {
   const [title, setTitle] = React.useState('');
@@ -134,9 +133,8 @@ const AddNotice = params => {
                 <Text style={styles.checkBoxLabel}>Junior Workers</Text>
               </View>
             </View>
-
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
           </View>
+          <Text style={styles.errorMessage}>{errorMessage}</Text>
           <TouchableOpacity
             onPress={() => tryAddNotice()}
             activeOpacity={0.8}
@@ -219,7 +217,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#1F92D1',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 'auto',
   },
   buttonText: {
     fontFamily: 'Poppins-Medium',
@@ -231,6 +228,7 @@ const styles = StyleSheet.create({
     color: 'red',
     width: '100%',
     textAlign: 'center',
+    height: 50,
   },
   spinnerTextStyle: {
     color: '#FFF',

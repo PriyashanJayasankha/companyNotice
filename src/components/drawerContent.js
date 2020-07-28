@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AuthContext from '../context/authContext';
 
-import {StackActions} from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 
 const DrawerContent = params => {
   const {logout} = React.useContext(AuthContext);
@@ -32,9 +32,13 @@ const DrawerContent = params => {
   }
 
   const tryLogout = () => {
+    params.navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{name: 'Home'}],
+      }),
+    );
     logout();
-    params.navigation.navigate('Home', {screen: 'Notices'});
-    //params.navigation.dispatch(StackActions.popToTop());
   };
 
   return (
@@ -61,7 +65,19 @@ const DrawerContent = params => {
               style={styles.drawerItem}
               label="Add Notice"
               onPress={() => {
-                params.navigation.navigate('AddNotice');
+                // params.navigation.navigate('AddNotice');
+                params.navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [{name: 'AddNotice'}],
+                  }),
+                );
+                params.navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [{name: 'AddNotice'}],
+                  }),
+                );
               }}
             />
             <DrawerItem
@@ -71,7 +87,13 @@ const DrawerContent = params => {
               style={styles.drawerItem}
               label="New requests"
               onPress={() => {
-                params.navigation.navigate('NewRequests');
+                //params.navigation.navigate('NewRequests');
+                params.navigation.dispatch(
+                  CommonActions.reset({
+                    index: 2,
+                    routes: [{name: 'NewRequests'}],
+                  }),
+                );
               }}
             />
             <DrawerItem
@@ -81,7 +103,13 @@ const DrawerContent = params => {
               style={styles.drawerItem}
               label="Rejected requests"
               onPress={() => {
-                params.navigation.navigate('RejectedRequests');
+                //params.navigation.navigate('RejectedRequests');
+                params.navigation.dispatch(
+                  CommonActions.reset({
+                    index: 3,
+                    routes: [{name: 'RejectedRequests'}],
+                  }),
+                );
               }}
             />
             <DrawerItem
@@ -95,7 +123,13 @@ const DrawerContent = params => {
               style={styles.drawerItem}
               label="Accepted requests"
               onPress={() => {
-                params.navigation.navigate('AcceptedRequests');
+                //params.navigation.navigate('AcceptedRequests');
+                params.navigation.dispatch(
+                  CommonActions.reset({
+                    index: 4,
+                    routes: [{name: 'AcceptedRequests'}],
+                  }),
+                );
               }}
             />
           </View>

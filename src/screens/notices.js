@@ -3,10 +3,8 @@ import {
   Text,
   View,
   StyleSheet,
-  ScrollView,
   Dimensions,
   TouchableOpacity,
-  Alert,
   FlatList,
 } from 'react-native';
 import Firestore from '@react-native-firebase/firestore';
@@ -83,30 +81,6 @@ const Notices = params => {
     // Unsubscribe from events when no longer in use
     return () => subscriber();
   }, []);
-
-  // const getNotices = async () => {
-  //   return await Firestore()
-  //     .collection('Users')
-  //     .get()
-  //     .then(snapshot => {
-  //       snapshot.docs.forEach(doc => {
-  //         console.warn(doc.data());
-  //       });
-  //     });
-  // };
-
-  // const notices = getNotices();
-
-  //console.warn(notices);
-
-  const titles = ['aaa', 'bbb', 'ccc'];
-  const posts = titles.map(item => (
-    <TouchableOpacity
-      activeOpacity={1}
-      onPress={() => params.navigation.push('ViewNotice')}>
-      <NoticeCard title={item} />
-    </TouchableOpacity>
-  ));
 
   return (
     <View style={styles.container}>
