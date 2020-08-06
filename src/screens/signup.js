@@ -125,109 +125,117 @@ const Signup = params => {
         <Text style={styles.heading}>Sign Up</Text>
       </View>
       <View style={styles.bottomContainer}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <Spinner
-            visible={registering}
-            textContent={'Signing up...'}
-            textStyle={styles.spinnerTextStyle}
-          />
-          <Spinner
-            visible={logging}
-            textContent={'Logging in...'}
-            textStyle={styles.spinnerTextStyle}
-          />
-          <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>E-mail</Text>
-              <TextInput
-                onChangeText={text => setEmail(text)}
-                style={styles.input}
-              />
-            </View>
-
-            <View style={styles.names}>
-              <View style={{...styles.inputGroup, flex: 1}}>
-                <Text style={styles.inputLabel}>First Name</Text>
+        <View>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <Spinner
+              visible={registering}
+              textContent={'Signing up...'}
+              textStyle={styles.spinnerTextStyle}
+            />
+            <Spinner
+              visible={logging}
+              textContent={'Logging in...'}
+              textStyle={styles.spinnerTextStyle}
+            />
+            <View style={styles.form}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>E-mail</Text>
                 <TextInput
-                  onChangeText={text => setFirstName(text)}
+                  onChangeText={text => setEmail(text)}
                   style={styles.input}
                 />
               </View>
-              <View style={{...styles.inputGroup, flex: 1}}>
-                <Text style={styles.inputLabel}>Last Name</Text>
-                <TextInput
-                  onChangeText={text => setLastName(text)}
-                  style={styles.input}
+
+              <View style={styles.names}>
+                <View style={{...styles.inputGroup, flex: 1}}>
+                  <Text style={styles.inputLabel}>First Name</Text>
+                  <TextInput
+                    onChangeText={text => setFirstName(text)}
+                    style={styles.input}
+                  />
+                </View>
+                <View style={{...styles.inputGroup, flex: 1}}>
+                  <Text style={styles.inputLabel}>Last Name</Text>
+                  <TextInput
+                    onChangeText={text => setLastName(text)}
+                    style={styles.input}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Your Position</Text>
+                <DropDownPicker
+                  items={[
+                    {
+                      label: 'Director',
+                      value: 2,
+                      icon: () => (
+                        <Icon name="user" size={18} color="#1F92D1" />
+                      ),
+                    },
+                    {
+                      label: 'Senior Worker',
+                      value: 3,
+                      icon: () => (
+                        <Icon name="user" size={18} color="#1F92D1" />
+                      ),
+                    },
+                    {
+                      label: 'Junior Worker',
+                      value: 4,
+                      icon: () => (
+                        <Icon name="user" size={18} color="#1F92D1" />
+                      ),
+                    },
+                  ]}
+                  defaultValue={position}
+                  containerStyle={dropDownStyle.containerStyle}
+                  style={dropDownStyle.style}
+                  itemStyle={dropDownStyle.itemStyle}
+                  dropDownStyle={dropDownStyle.dropDownStyle}
+                  onChangeItem={item => setPosition(item.value)}
                 />
               </View>
-            </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Your Position</Text>
-              <DropDownPicker
-                items={[
-                  {
-                    label: 'Director',
-                    value: 2,
-                    icon: () => <Icon name="user" size={18} color="#1F92D1" />,
-                  },
-                  {
-                    label: 'Senior Worker',
-                    value: 3,
-                    icon: () => <Icon name="user" size={18} color="#1F92D1" />,
-                  },
-                  {
-                    label: 'Junior Worker',
-                    value: 4,
-                    icon: () => <Icon name="user" size={18} color="#1F92D1" />,
-                  },
-                ]}
-                defaultValue={position}
-                containerStyle={dropDownStyle.containerStyle}
-                style={dropDownStyle.style}
-                itemStyle={dropDownStyle.itemStyle}
-                dropDownStyle={dropDownStyle.dropDownStyle}
-                onChangeItem={item => setPosition(item.value)}
-              />
-            </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Password</Text>
+                <View style={styles.password}>
+                  <TextInput
+                    onChangeText={text => setPassword(text)}
+                    // eslint-disable-next-line react-native/no-inline-styles
+                    style={{...styles.input, width: '100%'}}
+                    secureTextEntry={showPassword.security}
+                  />
+                  <Text
+                    onPress={changePasswordVisibility}
+                    style={styles.showPassword}>
+                    {showPassword.text}
+                  </Text>
+                </View>
+              </View>
 
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Password</Text>
-              <View style={styles.password}>
-                <TextInput
-                  onChangeText={text => setPassword(text)}
-                  // eslint-disable-next-line react-native/no-inline-styles
-                  style={{...styles.input, width: '100%'}}
-                  secureTextEntry={showPassword.security}
-                />
+              <Text style={styles.errorMessage}>{errorMessage}</Text>
+            </View>
+            <View style={styles.bottomButtons}>
+              <TouchableOpacity
+                onPress={() => tryRegister()}
+                activeOpacity={0.8}
+                style={styles.submitButton}>
+                <Text style={styles.buttonText}>Signup</Text>
+              </TouchableOpacity>
+
+              <View style={styles.noAccount}>
+                <Text> Alredy a member? </Text>
                 <Text
-                  onPress={changePasswordVisibility}
-                  style={styles.showPassword}>
-                  {showPassword.text}
+                  onPress={() => params.navigation.pop()}
+                  style={styles.login}>
+                  Login
                 </Text>
               </View>
             </View>
-
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
-          </View>
-          <View style={styles.bottomButtons}>
-            <TouchableOpacity
-              onPress={() => tryRegister()}
-              activeOpacity={0.8}
-              style={styles.submitButton}>
-              <Text style={styles.buttonText}>Signup</Text>
-            </TouchableOpacity>
-
-            <View style={styles.noAccount}>
-              <Text> Alredy a member? </Text>
-              <Text
-                onPress={() => params.navigation.pop()}
-                style={styles.login}>
-                Login
-              </Text>
-            </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
       </View>
     </View>
   );
@@ -257,28 +265,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '15%',
+    height: 60,
     backgroundColor: '#1F92D1',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   heading: {
-    fontSize: 35,
+    fontSize: 25,
     color: 'white',
-    marginTop: 'auto',
-    marginBottom: 20,
     fontFamily: 'Poppins-Medium',
   },
   bottomContainer: {
     flex: 1,
-    alignContent: 'center',
+    justifyContent: 'center',
   },
   scrollView: {
-    width: '100%',
     alignItems: 'center',
   },
   form: {
     width: '90%',
-    marginTop: 50,
   },
   names: {
     flexDirection: 'row',

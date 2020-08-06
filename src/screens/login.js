@@ -77,57 +77,59 @@ const Login = params => {
         <Text style={styles.heading}>Log In</Text>
       </View>
       <View style={styles.bottomContainer}>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <Spinner
-            visible={tryingLogging}
-            textContent={'Logging in...'}
-            textStyle={styles.spinnerTextStyle}
-          />
-          <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>E-mail</Text>
-              <TextInput
-                onChangeText={text => setEmail(text)}
-                style={styles.input}
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Password</Text>
-              <View style={styles.password}>
+        <View>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <Spinner
+              visible={tryingLogging}
+              textContent={'Logging in...'}
+              textStyle={styles.spinnerTextStyle}
+            />
+            <View style={styles.form}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Email</Text>
                 <TextInput
-                  onChangeText={text => setPassword(text)}
+                  onChangeText={text => setEmail(text)}
                   style={styles.input}
-                  secureTextEntry={showPassword.security}
                 />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Password</Text>
+                <View style={styles.password}>
+                  <TextInput
+                    onChangeText={text => setPassword(text)}
+                    style={{...styles.input, width: '100%'}}
+                    secureTextEntry={showPassword.security}
+                  />
+                  <Text
+                    onPress={changePasswordVisibility}
+                    style={styles.showPassword}>
+                    {showPassword.text}
+                  </Text>
+                </View>
+              </View>
+
+              <Text style={styles.errorMessage}>{errorMessage}</Text>
+            </View>
+            <View style={styles.bottomButtons}>
+              <TouchableOpacity
+                onPress={() => tryLogin()}
+                activeOpacity={0.8}
+                style={styles.submitButton}>
+                <Text style={styles.buttonText}>Login</Text>
+              </TouchableOpacity>
+
+              <View style={styles.noAccount}>
+                <Text> Don't have account? </Text>
                 <Text
-                  onPress={changePasswordVisibility}
-                  style={styles.showPassword}>
-                  {showPassword.text}
+                  onPress={() => params.navigation.push('Signup')}
+                  style={styles.login}>
+                  Signup
                 </Text>
               </View>
             </View>
-
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
-          </View>
-          <View style={styles.bottomButtons}>
-            <TouchableOpacity
-              onPress={() => tryLogin()}
-              activeOpacity={0.8}
-              style={styles.submitButton}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableOpacity>
-
-            <View style={styles.noAccount}>
-              <Text> Dont have an account? </Text>
-              <Text
-                onPress={() => params.navigation.push('Signup')}
-                style={styles.signup}>
-                Sign Up
-              </Text>
-            </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
       </View>
     </View>
   );
@@ -138,32 +140,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '15%',
+    height: 60,
     backgroundColor: '#1F92D1',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   heading: {
-    fontSize: 35,
+    fontSize: 25,
     color: 'white',
-    marginTop: 'auto',
-    marginBottom: 20,
     fontFamily: 'Poppins-Medium',
   },
   bottomContainer: {
     flex: 1,
-    width: '100%',
+    justifyContent: 'center',
   },
   scrollView: {
-    width: '100%',
-    flex: 1,
-    paddingBottom: 30,
-    margin: 0,
     alignItems: 'center',
   },
   form: {
     width: '90%',
-    marginTop: 'auto',
-    alignContent: 'center',
+  },
+  names: {
+    flexDirection: 'row',
   },
   inputGroup: {
     margin: 10,
@@ -181,7 +179,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingStart: 20,
     paddingEnd: 20,
-    width: '100%',
     fontFamily: 'Poppins-Regular',
   },
   password: {
@@ -190,22 +187,24 @@ const styles = StyleSheet.create({
   },
   showPassword: {
     fontFamily: 'Poppins-Bold',
+    textAlign: 'right',
+    width: 50,
     fontSize: 16,
     marginLeft: -60,
     color: '#1F92D1',
   },
-  submitButton: {
+  bottomButtons: {
     margin: 10,
+    marginTop: 60,
+    width: '90%',
+    padding: 10,
+  },
+  submitButton: {
     borderRadius: 8,
     height: 50,
     backgroundColor: '#1F92D1',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  bottomButtons: {
-    marginTop: 'auto',
-    width: '90%',
-    padding: 10,
   },
   buttonText: {
     fontFamily: 'Poppins-Medium',
@@ -217,7 +216,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  signup: {
+  login: {
     textDecorationLine: 'underline',
     color: '#1F92D1',
   },

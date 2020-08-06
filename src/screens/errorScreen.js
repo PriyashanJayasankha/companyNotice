@@ -33,12 +33,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '15%',
+    height: 60,
     backgroundColor: '#1F92D1',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   heading: {
-    fontSize: 35,
+    fontSize: 25,
     color: 'white',
     marginTop: 'auto',
     fontFamily: 'Poppins-Medium',

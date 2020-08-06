@@ -38,7 +38,6 @@ const AcceptedRequests = params => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.heading}>Accepted Requests</Text>
         <Icon
           onPress={() => params.navigation.toggleDrawer()}
           style={styles.icon}
@@ -46,6 +45,9 @@ const AcceptedRequests = params => {
           size={32}
           color="white"
         />
+        <View style={styles.headingContainer}>
+          <Text style={styles.heading}>Accepted Requests</Text>
+        </View>
       </View>
       <View style={styles.bottomContainer}>
         <Spinner
@@ -68,21 +70,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '15%',
+    height: 60,
     backgroundColor: '#1F92D1',
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-  heading: {
-    fontSize: 35,
-    color: 'white',
-    marginTop: 'auto',
-    fontFamily: 'Poppins-Medium',
-    marginBottom: -20,
+    marginBottom: 5,
   },
   icon: {
-    marginRight: 'auto',
+    zIndex: 1,
     marginLeft: 10,
-    marginBottom: 10,
+  },
+  headingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: -42,
+  },
+  heading: {
+    fontSize: 25,
+    color: 'white',
+    fontFamily: 'Poppins-Medium',
   },
   bottomContainer: {
     flex: 1,

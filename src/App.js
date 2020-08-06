@@ -180,7 +180,7 @@ const App = () => {
       />
       <NavigationContainer>
         <Provider store={store}>
-          <SafeAreaView style={styles.container}>
+          <View style={styles.container}>
             <Spinner
               visible={userToken.loading && loading}
               textContent={'Loading...'}
@@ -192,7 +192,7 @@ const App = () => {
               textStyle={styles.spinnerTextStyle}
             />
             <>{loadScreen()}</>
-          </SafeAreaView>
+          </View>
         </Provider>
       </NavigationContainer>
     </AuthContext.Provider>
@@ -202,6 +202,7 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: StatusBar.currentHeight,
   },
   text: {
     fontSize: 80,

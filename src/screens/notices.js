@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  View,
-  StyleSheet,
-  Dimensions,
-  TouchableOpacity,
-  FlatList,
-} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import Firestore from '@react-native-firebase/firestore';
 
 import NoticeCard from '../components/noticeCard';
@@ -17,14 +10,10 @@ import AuthContext from '../context/authContext';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
-const windowHeight = Dimensions.get('window').height;
-
 const Notices = params => {
-  //   Alert.alert('Alert Title', 'My Alert Msg', [], {cancelable: false});
-
   const {getUser} = React.useContext(AuthContext);
 
-  const [loading, setLoading] = React.useState(true); // Set loading to true on component mount
+  const [loading, setLoading] = React.useState(true);
   const [notices, setNotices] = React.useState([]);
 
   const user = getUser();
@@ -32,6 +21,7 @@ const Notices = params => {
   React.useEffect(() => {
     const subscriber = Firestore()
       .collection('notices')
+      .orderBy('time')
       .onSnapshot(querySnapshot => {
         let tempNotices = [];
 
@@ -85,7 +75,6 @@ const Notices = params => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.heading}>Notices</Text>
         <Icon
           onPress={() => params.navigation.toggleDrawer()}
           style={styles.icon}
@@ -93,24 +82,31 @@ const Notices = params => {
           size={32}
           color="white"
         />
+        <View style={styles.headingContainer}>
+          <Text style={styles.heading}>Notices</Text>
+        </View>
       </View>
       <View style={styles.bottomContainer}>
-        <Spinner
-          visible={loading}
-          textContent={'Loading data...'}
-          textStyle={styles.spinnerTextStyle}
-        />
-        <FlatList
-          style={styles.flatlist}
-          data={notices}
-          renderItem={({item}) => (
-            <TouchableOpacity
-              activeOpacity={1}
-              onPress={() => params.navigation.navigate('ViewNotice', {item})}>
-              <NoticeCard item={item} />
-            </TouchableOpacity>
-          )}
-        />
+        <View style={styles.scrollView}>
+          <Spinner
+            visible={loading}
+            textContent={'Loading data...'}
+            textStyle={styles.spinnerTextStyle}
+          />
+          <FlatList
+            style={styles.flatlist}
+            data={notices}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                activeOpacity={1}
+                onPress={() =>
+                  params.navigation.navigate('ViewNotice', {item})
+                }>
+                <NoticeCard item={item} />
+              </TouchableOpacity>
+            )}
+          />
+        </View>
       </View>
     </View>
   );
@@ -121,29 +117,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '15%',
+    height: 60,
     backgroundColor: '#1F92D1',
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-  heading: {
-    fontSize: 35,
-    color: 'white',
-    marginTop: 'auto',
-    fontFamily: 'Poppins-Medium',
-    marginBottom: -20,
+    marginBottom: 5,
   },
   icon: {
-    marginRight: 'auto',
+    zIndex: 1,
     marginLeft: 10,
-    marginBottom: 10,
+  },
+  headingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: -42,
+  },
+  heading: {
+    fontSize: 25,
+    color: 'white',
+    fontFamily: 'Poppins-Medium',
   },
   bottomContainer: {
     flex: 1,
-    alignContent: 'center',
-  },
-  flatlist: {
-    minHeight: windowHeight - (windowHeight * 18) / 100,
-    width: '100%',
+    alignItems: 'center',
   },
   spinnerTextStyle: {
     color: '#FFF',

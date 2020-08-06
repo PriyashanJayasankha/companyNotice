@@ -90,7 +90,6 @@ const ViewNotice = params => {
   return (
     <View style={styles.container}>
       <View style={styles.topBar}>
-        <Text style={styles.heading}>View Notice</Text>
         <Icon
           onPress={() => params.navigation.toggleDrawer()}
           style={styles.icon}
@@ -98,9 +97,14 @@ const ViewNotice = params => {
           size={32}
           color="white"
         />
+        <View style={styles.headingContainer}>
+          <Text style={styles.heading}>View Notice</Text>
+        </View>
       </View>
       <View style={styles.bottomContainer}>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.scrollView}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.audianceLabel}>Norice for : </Text>
           <Text style={styles.audiance}>{audiance}</Text>
@@ -171,31 +175,33 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topBar: {
-    height: '15%',
+    height: 60,
     backgroundColor: '#1F92D1',
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-  heading: {
-    fontSize: 35,
-    color: 'white',
-    marginTop: 'auto',
-    fontFamily: 'Poppins-Medium',
-    marginBottom: -20,
+    marginBottom: 5,
   },
   icon: {
-    marginRight: 'auto',
+    zIndex: 1,
     marginLeft: 10,
-    marginBottom: 10,
+  },
+  headingContainer: {
+    flex: 1,
+    alignItems: 'center',
+    marginLeft: -42,
+  },
+  heading: {
+    fontSize: 25,
+    color: 'white',
+    fontFamily: 'Poppins-Medium',
   },
   bottomContainer: {
     flex: 1,
-    alignContent: 'center',
+    alignItems: 'center',
   },
   scrollView: {
-    width: '100%',
-    minHeight: windowHeight - (windowHeight * 18) / 100,
-    padding: 30,
-    flex: 1,
+    width: '90%',
+    paddingBottom: 10,
   },
   title: {
     textAlign: 'center',
@@ -239,8 +245,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    marginTop: 50,
-    marginBottom: 50,
+    marginTop: 20,
+    marginBottom: 10,
   },
   deleteButton: {
     borderRadius: 8,
