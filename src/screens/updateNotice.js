@@ -3,11 +3,12 @@ import {
   Text,
   View,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   CheckBox,
 } from 'react-native';
+
+import {TextInput} from 'react-native-gesture-handler';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 

@@ -3,11 +3,12 @@ import {
   Text,
   View,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
   ScrollView,
   CheckBox,
 } from 'react-native';
+
+import {TextInput} from 'react-native-gesture-handler';
 
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -99,6 +100,7 @@ const AddNotice = params => {
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Title</Text>
                 <TextInput
+                  selectTextOnFocus={true}
                   onChangeText={text => setTitle(text)}
                   style={styles.input}
                 />
