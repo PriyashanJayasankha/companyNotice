@@ -20,18 +20,6 @@ import Firestore from '@react-native-firebase/firestore';
 
 import AuthContext from '../context/authContext';
 
-// validate = text => {
-//   let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-//   if (reg.test(text) === false) {
-//     console.log('Email is Not Correct');
-//     this.setState({email: text});
-//     return false;
-//   } else {
-//     this.setState({email: text});
-//     console.log('Email is Correct');
-//   }
-// };
-
 const Signup = params => {
   const [showPassword, setShowPassword] = useState({
     text: 'Show',
@@ -123,6 +111,11 @@ const Signup = params => {
     <View style={styles.container}>
       <View style={styles.topBar}>
         <Text style={styles.heading}>Sign Up</Text>
+      </View>
+      <View style={styles.myDetailsBar}>
+        <Text style={{color: 'white', fontWeight: 'bold'}}>
+          MGP Jayasankha - 17000653
+        </Text>
       </View>
       <View style={styles.bottomContainer}>
         <View>
@@ -269,6 +262,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#1F92D1',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  myDetailsBar: {
+    height: 20,
+    backgroundColor: '#1F92D1',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
   },
   heading: {
     fontSize: 25,

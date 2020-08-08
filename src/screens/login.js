@@ -76,6 +76,11 @@ const Login = params => {
       <View style={styles.topBar}>
         <Text style={styles.heading}>Log In</Text>
       </View>
+      <View style={styles.myDetailsBar}>
+        <Text style={{color: 'white', fontWeight: 'bold'}}>
+          MGP Jayasankha - 17000653
+        </Text>
+      </View>
       <View style={styles.bottomContainer}>
         <View>
           <ScrollView contentContainerStyle={styles.scrollView}>
@@ -144,6 +149,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#1F92D1',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  myDetailsBar: {
+    height: 20,
+    backgroundColor: '#1F92D1',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 5,
   },
   heading: {
     fontSize: 25,

@@ -6,6 +6,7 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Feather';
@@ -101,6 +102,11 @@ const ViewNotice = params => {
           <Text style={styles.heading}>View Notice</Text>
         </View>
       </View>
+      <View style={styles.myDetailsBar}>
+        <Text style={{color: 'white', fontWeight: 'bold'}}>
+          MGP Jayasankha - 17000653
+        </Text>
+      </View>
       <View style={styles.bottomContainer}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -149,7 +155,23 @@ const ViewNotice = params => {
           {user.position === 1 ? (
             <View style={styles.buttonContainer}>
               <TouchableOpacity
-                onPress={() => deleteNotice()}
+                onPress={() =>
+                  Alert.alert(
+                    '',
+                    'Are you sure you want to delete this notice ?',
+                    [
+                      {
+                        text: 'Cancel',
+                        onPress: () => console.log('cancel pressed'),
+                      },
+                      {
+                        text: 'Delete',
+                        onPress: () => deleteNotice(),
+                      },
+                    ],
+                    {cancelable: false},
+                  )
+                }
                 activeOpacity={0.8}
                 style={styles.deleteButton}>
                 <Text style={styles.buttonText}>Delete</Text>
@@ -179,6 +201,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#1F92D1',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  myDetailsBar: {
+    height: 20,
+    backgroundColor: '#1F92D1',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 5,
   },
   icon: {

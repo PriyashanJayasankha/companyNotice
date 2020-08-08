@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 
 import Firestore from '@react-native-firebase/firestore';
 
@@ -44,7 +44,23 @@ const AcceptedRequestCard = params => {
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            onPress={() => reject(params.item.id)}
+            onPress={() =>
+              Alert.alert(
+                '',
+                'Are you sure you want to reject this user ?',
+                [
+                  {
+                    text: 'Cancel',
+                    onPress: () => console.log('cancel pressed'),
+                  },
+                  {
+                    text: 'Reject',
+                    onPress: () => reject(params.item.id),
+                  },
+                ],
+                {cancelable: false},
+              )
+            }
             activeOpacity={0.8}
             style={styles.acceptButton}>
             <Text style={styles.buttonText}>Reject</Text>

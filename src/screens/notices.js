@@ -21,7 +21,7 @@ const Notices = params => {
   React.useEffect(() => {
     const subscriber = Firestore()
       .collection('notices')
-      .orderBy('time')
+      .orderBy('time', 'desc')
       .onSnapshot(querySnapshot => {
         let tempNotices = [];
 
@@ -86,6 +86,11 @@ const Notices = params => {
           <Text style={styles.heading}>Notices</Text>
         </View>
       </View>
+      <View style={styles.myDetailsBar}>
+        <Text style={{color: 'white', fontWeight: 'bold'}}>
+          MGP Jayasankha - 17000653
+        </Text>
+      </View>
       <View style={styles.bottomContainer}>
         <View style={styles.scrollView}>
           <Spinner
@@ -121,6 +126,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#1F92D1',
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  myDetailsBar: {
+    height: 20,
+    backgroundColor: '#1F92D1',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 5,
   },
   icon: {
