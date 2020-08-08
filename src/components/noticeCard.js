@@ -40,6 +40,16 @@ const NoticeCard = params => {
             <View />
           )}
         </View>
+        <Text style={styles.audiance}>Notice for : {audiance} </Text>
+        <View
+          style={{
+            borderBottomColor: '#888888',
+            borderBottomWidth: 0.5,
+          }}
+        />
+        <Text numberOfLines={2} ellipsizeMode="tail" style={styles.description}>
+          {params.item.description}
+        </Text>
         {params.item.isNew ? (
           <Text style={styles.time}>
             Added: {moment(params.item.time).fromNow()}
@@ -49,10 +59,6 @@ const NoticeCard = params => {
             Updated: {moment(params.item.time).fromNow()}
           </Text>
         )}
-        <Text numberOfLines={2} ellipsizeMode="tail" style={styles.description}>
-          {params.item.description}
-        </Text>
-        <Text style={styles.audiance}> Notice for : {audiance} </Text>
       </View>
     </View>
   );
@@ -94,6 +100,7 @@ const styles = StyleSheet.create({
   time: {
     fontFamily: 'Poppins-Regular',
     color: '#aaaaaa',
+    marginTop: 10,
   },
   description: {
     fontFamily: 'Poppins-Regular',
@@ -104,7 +111,6 @@ const styles = StyleSheet.create({
   audiance: {
     fontFamily: 'Poppins-Regular',
     color: '#3e3b3b',
-    marginTop: 10,
   },
 });
 
