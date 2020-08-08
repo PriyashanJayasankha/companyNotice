@@ -28,7 +28,9 @@ const NoticeCard = params => {
     <View style={styles.container}>
       <View style={styles.containerInner}>
         <View style={styles.titleAndStatus}>
-          <Text style={styles.title}>{params.item.title}</Text>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.title}>
+            {params.item.title}
+          </Text>
           {params.item.newForMe && params.item.isNew ? (
             <Text style={styles.statusNew}>New</Text>
           ) : (
@@ -91,11 +93,15 @@ const styles = StyleSheet.create({
     marginLeft: 'auto',
     fontFamily: 'Poppins-Bold',
     color: '#01A77F',
+    marginTop: -18,
+    marginRight: -10,
   },
   statusUpdated: {
     marginLeft: 'auto',
     fontFamily: 'Poppins-Bold',
     color: '#EABC45',
+    marginTop: -18,
+    marginRight: -10,
   },
   time: {
     fontFamily: 'Poppins-Regular',

@@ -100,7 +100,6 @@ const AddNotice = params => {
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>Title</Text>
                 <TextInput
-                  selectTextOnFocus={true}
                   onChangeText={text => setTitle(text)}
                   style={styles.input}
                 />
