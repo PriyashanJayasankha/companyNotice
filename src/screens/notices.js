@@ -153,6 +153,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  scrollView: {
+    width: '100%',
+  },
   spinnerTextStyle: {
     color: '#FFF',
   },
